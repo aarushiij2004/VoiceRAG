@@ -1,0 +1,10 @@
+faster-whisper
+sentence-transformers
+faiss-cpu
+google-generativeai
+pyttsx3
+sounddevice
+soundfile
+numpy
+pypdf
+python-dotenv
