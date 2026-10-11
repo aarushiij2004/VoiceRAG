@@ -1,0 +1,4 @@
+-r requirements-ui.txt
+-r requirements-api.txt
+pytest
+httpx

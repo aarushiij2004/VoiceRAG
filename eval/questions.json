@@ -1,0 +1,451 @@
+[
+  {
+    "question": "What is an operating system?",
+    "evidence": "manages all the resources of a computer system",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      1
+    ]
+  },
+  {
+    "question": "What is the difference between application software and system software?",
+    "evidence": "system software operates and controls the computer system",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      1
+    ]
+  },
+  {
+    "question": "What are the goals of an operating system?",
+    "evidence": "less process starvation",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      2
+    ]
+  },
+  {
+    "question": "How does a batch processing operating system work?",
+    "evidence": "operator collects the jobs from different users",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      3
+    ]
+  },
+  {
+    "question": "What is a thread?",
+    "evidence": "single sequence stream within a process",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      5,
+      21
+    ]
+  },
+  {
+    "question": "Why is switching between threads faster than switching between processes?",
+    "evidence": "cache state is preserved",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      6,
+      21
+    ]
+  },
+  {
+    "question": "What does the kernel do?",
+    "evidence": "interacts directly with the hardware",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      7
+    ]
+  },
+  {
+    "question": "What is the drawback of a microkernel?",
+    "evidence": "overhead switching b/w user mode and kernel mode",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      8
+    ]
+  },
+  {
+    "question": "How do applications talk to the kernel?",
+    "evidence": "how do apps interact with kernel",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      9
+    ]
+  },
+  {
+    "question": "What are the types of system calls?",
+    "evidence": "get process attributes, set process attributes",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      10
+    ]
+  },
+  {
+    "question": "What happens when you switch on a PC, what does the BIOS do?",
+    "evidence": "rom chip found on mother board",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      11
+    ]
+  },
+  {
+    "question": "How much memory can a 32-bit system address?",
+    "evidence": "2^32 unique memory addresses",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      12
+    ]
+  },
+  {
+    "question": "What is a CPU register?",
+    "evidence": "smallest unit of storage",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      13
+    ]
+  },
+  {
+    "question": "How does the operating system turn a program into a process?",
+    "evidence": "allocate runtime stack",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      14
+    ]
+  },
+  {
+    "question": "What are the different states a process can be in?",
+    "evidence": "waiting for io",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      15
+    ]
+  },
+  {
+    "question": "What is swapping?",
+    "evidence": "medium term schedular",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      16
+    ]
+  },
+  {
+    "question": "What is context switching?",
+    "evidence": "state save of the current process",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      16
+    ]
+  },
+  {
+    "question": "What is an orphan process?",
+    "evidence": "adopted by init process",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      16
+    ]
+  },
+  {
+    "question": "What is a zombie process?",
+    "evidence": "still has an entry in the process table",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      16
+    ]
+  },
+  {
+    "question": "How can a finished program still be listed in the process table?",
+    "evidence": "still has an entry in the process table",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      16
+    ]
+  },
+  {
+    "question": "What is the difference between preemptive and non-preemptive scheduling?",
+    "evidence": "keeps the cpu until it releases cpu",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      17
+    ]
+  },
+  {
+    "question": "How is waiting time calculated?",
+    "evidence": "time process spends waiting for cpu",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      17
+    ]
+  },
+  {
+    "question": "How does shortest job first scheduling work?",
+    "evidence": "process with least bt will be dispatched to cpu first",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      18
+    ]
+  },
+  {
+    "question": "How does a multilevel feedback queue stop low priority jobs from starving?",
+    "evidence": "this form of ageing prevents starvation",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      19
+    ]
+  },
+  {
+    "question": "What is the critical section problem?",
+    "evidence": "segment of code where processes/threads access shared resources",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      22
+    ]
+  },
+  {
+    "question": "How do two threads avoid corrupting a variable they both write to?",
+    "evidence": "segment of code where processes/threads access shared resources",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      22
+    ]
+  },
+  {
+    "question": "What is a condition variable?",
+    "evidence": "lets the thread wait until a certain condition occurs",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      23
+    ]
+  },
+  {
+    "question": "What is the dining philosophers problem?",
+    "evidence": "bowl of noodles",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      24
+    ]
+  },
+  {
+    "question": "What is deadlock?",
+    "evidence": "waiting process is never able to change its state",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      26
+    ]
+  },
+  {
+    "question": "What are the necessary conditions for deadlock?",
+    "evidence": "hold & wait",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      26,
+      27
+    ]
+  },
+  {
+    "question": "What is the ostrich algorithm?",
+    "evidence": "ostrich algorithm",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      27
+    ]
+  },
+  {
+    "question": "What is a safe state?",
+    "evidence": "a state is safe if the system can allocate resources to each process",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      28
+    ]
+  },
+  {
+    "question": "How does the banker's algorithm decide whether to grant a request?",
+    "evidence": "will leave the system in a safe state",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      28
+    ]
+  },
+  {
+    "question": "What does the MMU do with the relocation register?",
+    "evidence": "mmu maps the logical address dynamically",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      30
+    ]
+  },
+  {
+    "question": "What is compaction?",
+    "evidence": "all the free partitions are made contiguous",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      32
+    ]
+  },
+  {
+    "question": "Why do we need paging?",
+    "evidence": "two small non-contiguous free holes",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      33
+    ]
+  },
+  {
+    "question": "What is a TLB and why does it speed up paging?",
+    "evidence": "next time, we can get the values from tlb directly",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      34
+    ]
+  },
+  {
+    "question": "What is segmentation?",
+    "evidence": "supports the user view of memory",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      35
+    ]
+  },
+  {
+    "question": "What is virtual memory?",
+    "evidence": "illusion of having a very big main memory",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      36
+    ]
+  },
+  {
+    "question": "Which technique lets a program be bigger than the physical RAM?",
+    "evidence": "programs can be larger than physical memory",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      36
+    ]
+  },
+  {
+    "question": "What happens when a page fault occurs?",
+    "evidence": "will cause a trap to the os",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      37
+    ]
+  },
+  {
+    "question": "What is pure demand paging?",
+    "evidence": "never bring a page into memory until it is required",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      38
+    ]
+  },
+  {
+    "question": "What is Belady's anomaly?",
+    "evidence": "number of page faults will get increased with the increment in number of frames",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      39
+    ]
+  },
+  {
+    "question": "How does FIFO page replacement choose a victim?",
+    "evidence": "replacing the oldest page",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      39
+    ]
+  },
+  {
+    "question": "Why does a computer slow to a crawl when it keeps reloading the same pages again and again?",
+    "evidence": "quickly faults again",
+    "type": "paraphrase",
+    "in_scope": true,
+    "pages": [
+      41
+    ]
+  },
+  {
+    "question": "What is thrashing?",
+    "evidence": "quickly faults again",
+    "type": "direct",
+    "in_scope": true,
+    "pages": [
+      41
+    ]
+  },
+  {
+    "question": "What is the capital of France?",
+    "in_scope": false
+  },
+  {
+    "question": "How do I train a convolutional neural network?",
+    "in_scope": false
+  },
+  {
+    "question": "Who won the last cricket world cup?",
+    "in_scope": false
+  },
+  {
+    "question": "What is the TCP three-way handshake?",
+    "in_scope": false
+  },
+  {
+    "question": "How does the RSA encryption algorithm work?",
+    "in_scope": false
+  },
+  {
+    "question": "What are the common symptoms of the flu?",
+    "in_scope": false
+  },
+  {
+    "question": "Explain how a B-tree index works in a database.",
+    "in_scope": false
+  },
+  {
+    "question": "Give me a good recipe for pasta.",
+    "in_scope": false
+  }
+]

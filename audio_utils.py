@@ -6,6 +6,7 @@ No VAD/auto-stop -- keeping this manual is what makes the baseline reliable
 to demo. Auto-stop-on-silence is a good stretch goal once the baseline works.
 """
 
+import tempfile
 import threading
 import wave
 
@@ -16,7 +17,7 @@ SAMPLE_RATE = 16000
 CHANNELS = 1
 
 
-def record_until_enter(output_path: str = "input.wav") -> str:
+def record_until_enter(output_path: str = None) -> str:
     input("Press Enter to start recording...")
     print("Recording... press Enter again to stop.")
 
@@ -38,6 +39,11 @@ def record_until_enter(output_path: str = "input.wav") -> str:
         raise RuntimeError("No audio captured -- check your microphone.")
 
     audio = np.concatenate(frames, axis=0)
+
+    if output_path is None:  # temp file, so nothing is left in the project folder
+        handle = tempfile.NamedTemporaryFile(prefix="voicerag_", suffix=".wav", delete=False)
+        output_path = handle.name
+        handle.close()
 
     with wave.open(output_path, "wb") as wf:
         wf.setnchannels(CHANNELS)

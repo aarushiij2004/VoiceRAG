@@ -1,104 +1,92 @@
 """
-ingest.py -- Build a FAISS index from documents in the documents/ folder.
-
-Run this once before main.py, and again any time you add or change documents.
+ingest.py -- Build the FAISS index from documents in documents/.
 
     python ingest.py
+    python ingest.py --chunk-size 150 --overlap 30
+
+Run once before main.py, and again whenever documents or chunking settings change.
 """
 
-import pickle
-from pathlib import Path
+import argparse
+import json
+import os
+import tempfile
 
-import faiss
-from sentence_transformers import SentenceTransformer
-from pypdf import PdfReader
-
-DOCS_DIR = Path("documents")
-DATA_DIR = Path("data")
-INDEX_PATH = DATA_DIR / "faiss.index"
-CHUNKS_PATH = DATA_DIR / "chunks.pkl"
-
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-CHUNK_SIZE = 200       # words per chunk
-CHUNK_OVERLAP = 40     # words of overlap between consecutive chunks
+from config import (CHUNK_OVERLAP, CHUNK_SIZE, CHUNKS_PATH, DATA_DIR, DOCS_DIR,
+                    EMBEDDING_MODEL, INDEX_PATH, META_PATH)
+from documents import build_chunks, load_documents
 
 
-def read_txt(path: Path) -> str:
-    return path.read_text(encoding="utf-8", errors="ignore")
+def atomic_write_text(path, text: str) -> None:
+    """Write to a temp file in the same folder, then rename: readers never see a half-written file."""
+    path = os.fspath(path)
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path) or ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(text)
+        os.replace(tmp, path)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        raise
 
 
-def read_pdf(path: Path) -> str:
-    reader = PdfReader(str(path))
-    return "\n".join(page.extract_text() or "" for page in reader.pages)
+def embed_texts(model, texts: list):
+    """
+    Embed texts into L2-normalised float32 vectors.
+
+    Normalising to unit length means inner product == cosine similarity, which
+    is what the FAISS IndexFlatIP below ranks by. We normalise explicitly instead
+    of relying on a model's default, so swapping embedding models stays safe.
+    """
+    vectors = model.encode(texts, convert_to_numpy=True, normalize_embeddings=True,
+                           show_progress_bar=len(texts) > 50)
+    return vectors.astype("float32")
 
 
-def load_documents():
-    """Returns a list of (source_filename, full_text) tuples."""
-    docs = []
-    for path in sorted(DOCS_DIR.glob("**/*")):
-        if path.is_dir():
-            continue
-        suffix = path.suffix.lower()
-        if suffix in (".txt", ".md"):
-            text = read_txt(path)
-        elif suffix == ".pdf":
-            text = read_pdf(path)
-        else:
-            continue
-        if text.strip():
-            docs.append((path.name, text))
-    return docs
+def build_index(chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> int:
+    import faiss
+    from sentence_transformers import SentenceTransformer
 
-
-def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP):
-    """Simple word-based sliding-window chunking with overlap."""
-    words = text.split()
-    if not words:
-        return []
-    chunks = []
-    start = 0
-    while start < len(words):
-        end = start + chunk_size
-        chunks.append(" ".join(words[start:end]))
-        if end >= len(words):
-            break
-        start = end - overlap
-    return chunks
-
-
-def build_index():
     DATA_DIR.mkdir(exist_ok=True)
-    docs = load_documents()
+    docs = load_documents(DOCS_DIR)
     if not docs:
         raise SystemExit(
             f"No documents found in {DOCS_DIR}/. Add .txt, .md, or .pdf files and re-run."
         )
-
     print(f"Loaded {len(docs)} document(s): {[d[0] for d in docs]}")
 
-    all_chunks = []  # list of {"text": ..., "source": ...}
-    for filename, text in docs:
-        for chunk in chunk_text(text):
-            all_chunks.append({"text": chunk, "source": filename})
-
-    print(f"Split into {len(all_chunks)} chunk(s). Embedding with {EMBEDDING_MODEL}...")
+    chunks = build_chunks(docs, chunk_size, overlap)
+    print(f"Split into {len(chunks)} chunk(s) "
+          f"({chunk_size} words, {overlap} overlap). Embedding with {EMBEDDING_MODEL}...")
 
     model = SentenceTransformer(EMBEDDING_MODEL)
-    texts = [c["text"] for c in all_chunks]
-    embeddings = model.encode(texts, show_progress_bar=True, convert_to_numpy=True)
-    embeddings = embeddings.astype("float32")
+    vectors = embed_texts(model, [c["text"] for c in chunks])
 
-    dim = embeddings.shape[1]
-    index = faiss.IndexFlatL2(dim)
-    index.add(embeddings)
+    index = faiss.IndexFlatIP(vectors.shape[1])  # exact search, cosine via normalised vectors
+    index.add(vectors)
+    tmp_index = str(INDEX_PATH) + ".tmp"
+    faiss.write_index(index, tmp_index)
+    os.replace(tmp_index, INDEX_PATH)
 
-    faiss.write_index(index, str(INDEX_PATH))
-    with open(CHUNKS_PATH, "wb") as f:
-        pickle.dump(all_chunks, f)
+    atomic_write_text(CHUNKS_PATH, json.dumps(chunks, ensure_ascii=False))
+    atomic_write_text(META_PATH, json.dumps({
+        "embedding_model": EMBEDDING_MODEL,
+        "dim": int(vectors.shape[1]),
+        "metric": "cosine (inner product on normalised vectors)",
+        "chunk_size": chunk_size,
+        "chunk_overlap": overlap,
+        "num_chunks": len(chunks),
+    }, indent=2))
 
     print(f"Saved index -> {INDEX_PATH}")
-    print(f"Saved {len(all_chunks)} chunk records -> {CHUNKS_PATH}")
+    print(f"Saved {len(chunks)} chunk records -> {CHUNKS_PATH}")
+    return len(chunks)
 
 
 if __name__ == "__main__":
-    build_index()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--chunk-size", type=int, default=CHUNK_SIZE)
+    parser.add_argument("--overlap", type=int, default=CHUNK_OVERLAP)
+    args = parser.parse_args()
+    build_index(args.chunk_size, args.overlap)
